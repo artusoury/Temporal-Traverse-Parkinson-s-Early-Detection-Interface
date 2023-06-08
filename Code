@@ -1,1 +1,94 @@
+import tkinter as tk
+import time
+import random
+import os
+import csv
+from datetime import date
+import matplotlib.pyplot as plt
+
+class TypingTest(tk.Tk):
+    def __init__(self):
+        tk.Tk.__init__(self)
+        self.title("Typing Test")
+        self.entry = tk.Entry(self)
+        self.button = tk.Button(self, text="Start", command=self.start)
+        self.label = tk.Label(self, text="")
+        self.text_to_type = tk.Label(self, text="")
+        self.entry.pack()
+        self.button.pack()
+        self.label.pack()
+        self.text_to_type.pack()
+        self.start_time = None
+        self.log_file = 'typing_test_log.csv'
+        self.counter = 0
+        self.elapsed_times = []
+        self.words = ["the", "be", "to", "of", "and", "a", "in", "that", "have", "I", "it", "for", "not", "on", "with", 
+                 "he", "as", "you", "do", "at", "this", "but", "his", "by", "from", "they", "we", "say", "her", "she", 
+                 "or", "an", "will", "my", "one", "all", "would", "there", "their", "what", "so", "up", "out", "if", 
+                 "about", "who", "get", "which", "go", "me", "when", "make", "can", "like", "time", "no", "just", 
+                 "him", "know", "take", "people", "into", "year", "your", "good", "some", "could", "them", "see", 
+                 "other", "than", "then", "now", "look", "only", "come", "its", "over", "think", "also", "back", 
+                 "after", "use", "two", "how", "our", "work", "first", "well", "way", "even", "new", "want", "because", 
+                 "any", "these", "give", "day", "most", "us"]
+
+    def start(self):
+        self.text_to_type.config(text=self.generate_text(10))
+        self.start_time = time.time()
+        self.button.config(text="Stop", command=self.stop)
+        self.entry.bind('<KeyPress>', self.on_key_press)
+
+    def stop(self):
+        self.entry.unbind('<KeyPress>')
+        self.button.config(text="Start", command=self.start)
+        self.log_data()
+        self.start_time = None
+        self.counter = 0
+        self.elapsed_times = []
+
+    def on_key_press(self, event):
+        if self.start_time is not None:
+            self.counter += 1
+            if self.counter % 10 == 0:
+                elapsed_time = time.time() - self.start_time
+                self.elapsed_times.append(elapsed_time)
+                self.label.config(text="Elapsed time: %.2f" % elapsed_time)
+
+    def log_data(self):
+        if not os.path.isfile(self.log_file):
+            with open(self.log_file, mode='w', newline='') as file:
+                writer = csv.writer(file)
+                writer.writerow(["Date", "Average Time"])
+
+        with open(self.log_file, mode='a', newline='') as file:
+            writer = csv.writer(file)
+            average_time = sum(self.elapsed_times) / len(self.elapsed_times) if self.elapsed_times else 0
+            writer.writerow([str(date.today()), average_time])
+
+        if os.stat(self.log_file).st_size > 5:
+            self.plot_data()
+
+    def plot_data(self):
+        dates = []
+        times = []
+        with open(self.log_file, 'r') as file:
+            reader = csv.reader(file)
+            next(reader)
+            for row in reader:
+                dates.append(row[0])
+                times.append(float(row[1]))
+
+        plt.figure(figsize=(10, 5))
+        plt.plot(dates, times, marker='o')
+        plt.xlabel('Date')
+        plt.ylabel('Average Time')
+        plt.title('Typing Speed Over Time')
+        plt.grid()
+        plt.savefig('typing_test_plot.png')
+
+    def generate_text(self, length):
+        return ' '.join(random.choice(self.words) for _ in range(length))
+
+if __name__ == "__main__":
+    app = TypingTest()
+    app.mainloop()
 
