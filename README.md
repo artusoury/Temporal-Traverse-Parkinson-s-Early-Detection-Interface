@@ -1,5 +1,4 @@
-Title: Temporal Traverse: Parkinson’s Early Detection Interface
-Subtitle: A 10-second engagement daily, a pioneering stride towards proactive neurodegenerative monitoring.
+A 10-second engagement daily, a pioneering stride towards proactive neurodegenerative monitoring.
 
 Introducing Temporal Traverse, a Python-based application engineered to monitor nuanced fluctuations in typing speed, serving as potential early indicators of neurodegenerative disorders. Designed with a profound emphasis on user-centricity and privacy assurance, this application extends an open invitation for utilization, dissemination, and collaborative enhancement to create a proactive approach towards neurodegenerative health management.
 
